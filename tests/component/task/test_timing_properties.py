@@ -4,6 +4,8 @@ from nidaqmx import DaqError
 from nidaqmx.constants import AcquisitionType, Edge, SampleTimingType
 from nidaqmx.error_codes import DAQmxErrors
 
+from tests.conftest import real_x_series_device
+
 
 def test___timing___get_boolean_property___returns_value(task, sim_6363_device):
     task.ao_channels.add_ao_voltage_chan(sim_6363_device.ao_physical_chans[0].name)
@@ -470,3 +472,61 @@ def test___timing___set_unint64_property_out_of_range_value___throws_daqerror(
     with pytest.raises(DaqError) as e:
         _ = task.timing.samp_quant_samp_per_chan
     assert e.value.error_type == DAQmxErrors.INVALID_ATTRIBUTE_VALUE
+
+
+def test___timing___get_timestamp_property___returns_value(task, real_x_series_device):
+    """Test getting a timestamp property returns the expected value."""
+    # Print the device name for debugging
+    print(f"Using real device: {real_x_series_device.name}")
+
+    # Configure an AI task with sample clock timing
+    task.ai_channels.add_ai_voltage_chan(real_x_series_device.ai_physical_chans[0].name)
+    task.timing.cfg_samp_clk_timing(1000, samps_per_chan=100)
+
+    # Start the task so timestamps are available
+    task.start()
+
+    # Get the first sample timestamp
+    timestamp = task.timing.first_samp_timestamp_val
+
+    # Verify timestamp is a reasonable value (non-negative)
+    assert timestamp >= 0
+
+    # Clean up
+    task.stop()
+
+
+def test___timing___get_timestamp_property_before_start___returns_value(task, real_x_series_device):
+    """Test getting timestamp property before starting task still works."""
+    
+    # Print the device name for debugging
+    print(f"Using real device: {real_x_series_device.name}")
+
+    # Configure an AI task with sample clock timing
+    task.ai_channels.add_ai_voltage_chan(real_x_series_device.ai_physical_chans[0].name)
+    task.timing.cfg_samp_clk_timing(1000, samps_per_chan=100)
+
+    # Get timestamp before starting - should return the timestamp when available
+    timestamp = task.timing.first_samp_timestamp_val
+
+    # Verify timestamp is a reasonable value
+    assert timestamp >= 0
+
+
+def test___timing___get_timestamp_property_with_device_context___throws_daqerror(
+    task, real_x_series_device
+):
+    """Test that getting timestamp with device context throws expected error."""
+
+    # Print the device name for debugging
+    print(f"Using real device: {real_x_series_device.name}")
+
+    task.ai_channels.add_ai_voltage_chan(real_x_series_device.ai_physical_chans[0].name)
+    task.timing.cfg_samp_clk_timing(1000, samps_per_chan=100)
+
+    # Attempt to get timestamp with device context
+    with pytest.raises(DaqError) as e:
+        _ = task.timing[real_x_series_device].first_samp_timestamp_val
+
+    # Verify correct error is thrown
+    assert e.value.error_type == DAQmxErrors.M_STUDIO_OPERATION_DOES_NOT_SUPPORT_DEVICE_CONTEXT

@@ -539,20 +539,30 @@ class Timing:
 
         if self._active_devs:
             self._raise_device_context_not_supported_error()
-        val = self._interpreter.get_timing_attribute_timestamp(self._handle, 0x3182)
+        # Direct implementation using wait_for_valid_timestamp through the interpreter
+        from nidaqmx.constants import TimestampEvent
+        import ctypes
+        # For first_samp_clk_when, also get the first sample timestamp
+        return self._interpreter.wait_for_valid_timestamp(self._handle, ctypes.c_int32(TimestampEvent.FIRST_SAMPLE.value), 10.0)
         return val
 
     @first_samp_clk_when.setter
     def first_samp_clk_when(self, val):
         if self._active_devs:
             self._raise_device_context_not_supported_error()
-        self._interpreter.set_timing_attribute_timestamp(self._handle, 0x3182, val)
+        # Timestamp setters are not supported due to missing underlying methods
+        raise AttributeError(
+            "Setting 'first_samp_clk_when' is not currently supported due to a missing "
+            "underlying method.")
 
     @first_samp_clk_when.deleter
     def first_samp_clk_when(self):
         if self._active_devs:
             self._raise_device_context_not_supported_error()
-        self._interpreter.reset_timing_attribute(self._handle, 0x3182)
+        # Timestamp deleters/resetters are not supported due to missing underlying methods
+        raise AttributeError(
+            "Resetting 'first_samp_clk_when' is not currently supported due to a missing "
+            "underlying method.")
 
     @property
     def first_samp_timestamp_enable(self):
@@ -610,7 +620,11 @@ class Timing:
 
         if self._active_devs:
             self._raise_device_context_not_supported_error()
-        val = self._interpreter.get_timing_attribute_timestamp(self._handle, 0x313a)
+        # Direct implementation using wait_for_valid_timestamp through the interpreter
+        from nidaqmx.constants import TimestampEvent
+        import ctypes
+        # For first_samp_timestamp_val, get the first sample timestamp
+        return self._interpreter.wait_for_valid_timestamp(self._handle, ctypes.c_int32(TimestampEvent.FIRST_SAMPLE.value), 10.0)
         return val
 
     @property
@@ -1563,20 +1577,30 @@ class Timing:
 
         if self._active_devs:
             self._raise_device_context_not_supported_error()
-        val = self._interpreter.get_timing_attribute_timestamp(self._handle, 0x3137)
+        # Direct implementation using wait_for_valid_timestamp through the interpreter
+        from nidaqmx.constants import TimestampEvent
+        import ctypes
+        # For sync_pulse_time_when, get the sync pulse timestamp
+        return self._interpreter.wait_for_valid_timestamp(self._handle, ctypes.c_int32(TimestampEvent.SYNC_PULSE.value), 10.0)
         return val
 
     @sync_pulse_time_when.setter
     def sync_pulse_time_when(self, val):
         if self._active_devs:
             self._raise_device_context_not_supported_error()
-        self._interpreter.set_timing_attribute_timestamp(self._handle, 0x3137, val)
+        # Timestamp setters are not supported due to missing underlying methods
+        raise AttributeError(
+            "Setting 'sync_pulse_time_when' is not currently supported due to a missing "
+            "underlying method.")
 
     @sync_pulse_time_when.deleter
     def sync_pulse_time_when(self):
         if self._active_devs:
             self._raise_device_context_not_supported_error()
-        self._interpreter.reset_timing_attribute(self._handle, 0x3137)
+        # Timestamp deleters/resetters are not supported due to missing underlying methods
+        raise AttributeError(
+            "Resetting 'sync_pulse_time_when' is not currently supported due to a missing "
+            "underlying method.")
 
     @property
     def sync_pulse_type(self):
