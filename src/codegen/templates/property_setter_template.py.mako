@@ -63,10 +63,6 @@
         raise AttributeError(
             "Setting 'first_samp_clk_when' is not currently supported due to a missing "
             "underlying method.")
-        %elif hex(attribute.id) == "0x3137":  # sync_pulse_time_when
-        raise AttributeError(
-            "Setting 'sync_pulse_time_when' is not currently supported due to a missing "
-            "underlying method.")
         %else:
         raise AttributeError(
             f"Setting timestamp property with ID {hex(attribute.id)} is not currently supported due to a missing "

@@ -64,15 +64,9 @@
         # Direct implementation using wait_for_valid_timestamp through the interpreter
         from nidaqmx.constants import TimestampEvent
         import ctypes
-        %if hex(attribute.id) == "0x313a":  # first_samp_timestamp_val
-        # For first_samp_timestamp_val, get the first sample timestamp
+        %if hex(attribute.id) == "0x3182":  # first_samp_clk_when
+        # For first_samp_clk_when, fetch the first sample timestamp
         return self._interpreter.wait_for_valid_timestamp(self._handle, ctypes.c_int32(TimestampEvent.FIRST_SAMPLE.value), 10.0)
-        %elif hex(attribute.id) == "0x3182":  # first_samp_clk_when
-        # For first_samp_clk_when, also get the first sample timestamp
-        return self._interpreter.wait_for_valid_timestamp(self._handle, ctypes.c_int32(TimestampEvent.FIRST_SAMPLE.value), 10.0)
-        %elif hex(attribute.id) == "0x3137":  # sync_pulse_time_when
-        # For sync_pulse_time_when, get the sync pulse timestamp
-        return self._interpreter.wait_for_valid_timestamp(self._handle, ctypes.c_int32(TimestampEvent.SYNC_PULSE.value), 10.0)
         %else:
         raise AttributeError(
             f"Timestamp property with ID {hex(attribute.id)} is not currently supported due to a missing "
