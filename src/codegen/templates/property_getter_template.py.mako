@@ -62,15 +62,14 @@
             self._raise_device_context_not_supported_error()
         %if mapped_func_type == "timestamp":
         # Direct implementation using wait_for_valid_timestamp through the interpreter
+        %if hex(attribute.id) == "0x3182":  # first_samp_clk_when
         from nidaqmx.constants import TimestampEvent
         import ctypes
-        %if hex(attribute.id) == "0x3182":  # first_samp_clk_when
         # For first_samp_clk_when, fetch the first sample timestamp
-        return self._interpreter.wait_for_valid_timestamp(self._handle, ctypes.c_int32(TimestampEvent.FIRST_SAMPLE.value), 10.0)
+        val = self._interpreter.wait_for_valid_timestamp(self._handle, ctypes.c_int32(TimestampEvent.FIRST_SAMPLE.value), 10.0)
         %else:
-        raise AttributeError(
-            f"Timestamp property with ID {hex(attribute.id)} is not currently supported due to a missing "
-            "underlying method.")
+        # For all other timestamp properties, use generic getter
+        val = self._interpreter.get_${generic_attribute_func}(${', '.join(function_call_args)})
         %endif
         %else:
         val = self._interpreter.get_${generic_attribute_func}(${', '.join(function_call_args)})

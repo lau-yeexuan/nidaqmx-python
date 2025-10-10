@@ -31,20 +31,7 @@
         %else:
         if self._active_devs:
             self._raise_device_context_not_supported_error()
-        %if mapped_func_type == "timestamp":
-        # Timestamp deleters/resetters are not supported due to missing underlying methods
-        %if hex(attribute.id) == "0x3182":  # first_samp_clk_when
-        raise AttributeError(
-            "Resetting 'first_samp_clk_when' is not currently supported due to a missing "
-            "underlying method.")
-        %else:
-        raise AttributeError(
-            f"Resetting timestamp property with ID {hex(attribute.id)} is not currently supported due to a missing "
-            "underlying method.")
-        %endif
-        %else:
         self._interpreter.reset_${generic_attribute_func}(${', '.join(function_call_args)})
-        %endif
         %endif
     %else:
         self._interpreter.reset_${generic_attribute_func}(${', '.join(function_call_args)})
