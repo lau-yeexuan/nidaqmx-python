@@ -539,10 +539,8 @@ class Timing:
 
         if self._active_devs:
             self._raise_device_context_not_supported_error()
-        # Direct implementation using wait_for_valid_timestamp through the interpreter
         from nidaqmx.constants import TimestampEvent
         import ctypes
-        # For first_samp_clk_when, fetch the first sample timestamp
         val = self._interpreter.wait_for_valid_timestamp(self._handle, ctypes.c_int32(TimestampEvent.FIRST_SAMPLE.value), 10.0)
         return val
 
@@ -614,8 +612,6 @@ class Timing:
 
         if self._active_devs:
             self._raise_device_context_not_supported_error()
-        # Direct implementation using wait_for_valid_timestamp through the interpreter
-        # For all other timestamp properties, use generic getter
         val = self._interpreter.get_timing_attribute_timestamp(self._handle, 0x313a)
         return val
 
@@ -1569,8 +1565,6 @@ class Timing:
 
         if self._active_devs:
             self._raise_device_context_not_supported_error()
-        # Direct implementation using wait_for_valid_timestamp through the interpreter
-        # For all other timestamp properties, use generic getter
         val = self._interpreter.get_timing_attribute_timestamp(self._handle, 0x3137)
         return val
 
