@@ -31,6 +31,7 @@ def _convert_to_desired_timezone(
             std_datetime_result.minute,
             std_datetime_result.second,
             std_datetime_result.microsecond,
+            std_datetime_result.femtosecond,
             tzinfo=std_datetime_result.tzinfo
         )
         return desired_expected_time

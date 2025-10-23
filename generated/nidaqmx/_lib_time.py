@@ -38,21 +38,27 @@ class AbsoluteTime(  # noqa: D101 - Missing docstring in public class (auto-gene
     def from_datetime(  # noqa: D102 - Missing docstring in public method (auto-generated noqa)
         cls, dt: std_datetime | ht_datetime
     ) -> AbsoluteTime:
+        print(f"[from_datetime] Input datetime: {dt!r}")
         seconds_since_1904 = 0
 
         # Convert the subseconds.
         if isinstance(dt, ht_datetime):
+            print(f"[from_datetime] Input femtosecond: {dt.femtosecond}, yoctosecond: {dt.yoctosecond}, microsecond: {dt.microsecond}")
             seconds_since_1904 = int((dt - AbsoluteTime._EPOCH_1904).precision_total_seconds())
             total_yoctoseconds = dt.yoctosecond
             total_yoctoseconds += dt.femtosecond * AbsoluteTime._YS_PER_FS
             total_yoctoseconds += dt.microsecond * AbsoluteTime._YS_PER_US
+            print(f"[from_datetime] Total yoctoseconds: {total_yoctoseconds}")
             lsb = int(
                 round(AbsoluteTime._NUM_SUBSECONDS * total_yoctoseconds / AbsoluteTime._YS_PER_S)
             )
+            print(f"[from_datetime] Calculated lsb: {lsb}")
         else:
             seconds_since_1904 = int((dt - AbsoluteTime._EPOCH_1904).total_seconds())
             lsb = int(round(AbsoluteTime._NUM_SUBSECONDS * dt.microsecond / AbsoluteTime._US_PER_S))
+            print(f"[from_datetime] Calculated lsb (std_datetime): {lsb}")
 
+        print(f"[from_datetime] Output AbsoluteTime(msb={seconds_since_1904}, lsb={lsb})")    
         return AbsoluteTime(lsb=lsb, msb=seconds_since_1904)
 
     def to_datetime(  # noqa: D102 - Missing docstring in public method (auto-generated noqa)
