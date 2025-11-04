@@ -1,0 +1,26 @@
+
+=== Error detected at 2025-11-04 10:06:19 ===
+Error detected in test output:
+================================== FAILURES ===================================
+_ test___ao_current_task___get_bool_property___returns_default_value[library_init_kwargs] _
+
+task = Task(name=_unnamedTask<272>), device = Device(name=aoTester)
+
+    @pytest.mark.device_name("aoTester")
+    def test___ao_current_task___get_bool_property___returns_default_value(task, device):
+        task.ao_channels.add_ao_current_chan(device.ao_physical_chans[0].name)
+        task.start()
+    
+>       assert task.out_stream.open_current_loop_chans_exist
+E       assert False
+E        +  where False = OutStream(task=_unnamedTask<272>).open_current_loop_chans_exist
+E        +    where OutStream(task=_unnamedTask<272>) = Task(name=_unnamedTask<272>).out_stream
+
+tests\component\task\test_out_stream_write_properties.py:85: AssertionError
+
+=====================================
+
+=== Script stopped at 2025-11-04 10:06:19 ===
+Total iterations: 1
+Total error count: 1
+=====================================
