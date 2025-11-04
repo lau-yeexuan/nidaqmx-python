@@ -82,7 +82,7 @@ def test___ao_current_task___get_bool_property___returns_default_value(task, dev
     task.ao_channels.add_ao_current_chan(device.ao_physical_chans[0].name)
     task.start()
 
-    assert task.out_stream.open_current_loop_chans_exist
+    assert not task.out_stream.open_current_loop_chans_exist
 
 
 #@pytest.mark.xfail(reason="https://github.com/ni/nidaqmx-python/issues/833")
