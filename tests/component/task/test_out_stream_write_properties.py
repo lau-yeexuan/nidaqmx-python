@@ -83,6 +83,7 @@ def test___ao_current_task___get_bool_property___returns_default_value(task, dev
     task.start()
 
     assert not task.out_stream.open_current_loop_chans_exist
+    #assert not True  
 
 
 #@pytest.mark.xfail(reason="https://github.com/ni/nidaqmx-python/issues/833")
@@ -97,6 +98,7 @@ def test___ao_current_task___get_string_list_property___returns_default_value(ta
     _ = task.out_stream.open_current_loop_chans_exist
 
     assert task.out_stream.open_current_loop_chans == []
+    #assert ['aoTester/ao0'] == []
 
 
 #@pytest.mark.xfail(reason="https://github.com/ni/nidaqmx-python/issues/833")

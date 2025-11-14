@@ -30,18 +30,30 @@ def check_for_specific_error(line, error_log_path, context):
         
         # Check if we have the complete failure info
         full_context = "".join(context['buffer'])
-        if (
+        
+        # Check for first error pattern
+        first_error = (
             "test___ao_current_task___get_bool_property___returns_default_value" in full_context 
             and "AssertionError" in full_context
-            and "assert False" in full_context
-            and "where False = OutStream" in full_context
-        ):
+            and "assert not True" in full_context
+        )
+        
+        # Check for second error pattern
+        second_error = (
+            "test___ao_current_task___get_string_list_property___returns_default_value" in full_context
+            and "AssertionError: assert ['aoTester/ao0'] == []" in full_context
+            and "Left contains one more item: 'aoTester/ao0'" in full_context
+        )
+        
+        if first_error or second_error:
             error_counter.increment()
-            print("\n🚨 DETECTED TARGET ERROR! Stopping execution...\n")
+            error_type = "FIRST" if first_error else "SECOND"
+            print(f"\n🚨 DETECTED TARGET ERROR ({error_type})! Stopping execution...\n")
             error_text = f"Error detected in test output:\n{full_context}"
             
             with open(error_log_path, 'a') as f:
                 f.write(f"\n=== Error detected at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n")
+                f.write(f"Error type: {error_type}\n")
                 f.write(error_text)
                 f.write("\n=====================================\n")
             
@@ -79,7 +91,7 @@ def run_command(command, check=True):
             
         process.wait()
         if check and process.returncode != 0 and error_counter.count == 0:
-            sys.exit(process.returncode)
+            sys.exit(process.returncode) 
             
     except Exception as e:
         print(f"Error running command: {e}")
@@ -117,6 +129,15 @@ def main():
             if run_command("poetry run tox"):
                 break  # Error found, stop iterations
             
+            # Log progress every 10 iterations (only once per loop)
+            if iterations % 10 == 0:
+                with open(error_log_path, 'a') as f:
+                    f.write(f"\n=== Progress update at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n")
+                    f.write(f"Total iterations: {iterations}\n")
+                    f.write(f"Total error count: {error_counter.count}\n")
+                    f.write("=====================================\n")
+                print(f"\nProgress logged: {iterations} iterations completed")    
+
     except KeyboardInterrupt:
         print("\nScript interrupted by user")
     finally:
